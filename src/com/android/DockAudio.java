@@ -21,7 +21,7 @@ public class DockAudio extends BroadcastReceiver {
                 am.setParameters("DockState=0");
             } else {
                 Log.i(LOG_TAG, "Docked!");
-                am.setParameters("DockState=1");
+                am.setParameters("DockState="+state);
             }
         }
     }
