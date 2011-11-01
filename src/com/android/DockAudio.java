@@ -8,6 +8,8 @@ import android.media.AudioManager;
 import android.media.AudioSystem;
 import android.util.Log;
 
+import java.lang.Thread;
+
 /**************************************************
  * Intents ------------------------> Numeric code *
  *                                                *
@@ -33,17 +35,21 @@ public class DockAudio extends BroadcastReceiver {
             int state = intent.getExtras().getInt("android.intent.extra.DOCK_STATE",1);
             if(state == 0){
                 Log.i(LOG_TAG, "Removed from dock!");
+                AudioSystem.setForceUse(0x3, 0x00);
                 AudioSystem.setDeviceConnectionState(0x400, 0x00, "");
                 AudioSystem.setDeviceConnectionState(0x800, 0x00, "");
-                AudioSystem.setDeviceConnectionState(0x1000, 0x00, "");
-                am.setParameters("DockState=0");
+                am.setParameters("DockState=0;routing=2");
             } else if(state == 1) {
                 Log.i(LOG_TAG, "Docked on desktop!");
-                am.setParameters("DockState=1");
+                am.setParameters("DockState=1;routing=1024");
+                AudioSystem.setForceUse(0x3, 0x400);
+                try { Thread.sleep(3000); } catch (Exception e) {}
                 AudioSystem.setDeviceConnectionState(0x400, 0x01, "");
             } else {
                 Log.i(LOG_TAG, "Docked on car!");
-                am.setParameters("DockState=2");
+                am.setParameters("DockState=2;routing=2048");
+                AudioSystem.setForceUse(0x3, 0x800);
+                try { Thread.sleep(3000); } catch (Exception e) {}
                 AudioSystem.setDeviceConnectionState(0x800, 0x01, "");
             }
 
