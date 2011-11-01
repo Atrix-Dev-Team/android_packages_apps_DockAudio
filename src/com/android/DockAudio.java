@@ -11,9 +11,14 @@ import android.util.Log;
 /**************************************************
  * Intents ------------------------> Numeric code *
  *                                                *
- * MOT_BASIC_DOCK_AUDIO_PLUG ------> 0x400        *
- * MOT_SMART_DOCK_SPDIF_PLUG ------> 0x800        *
+ * MOT_BASIC_DOCK_AUDIO_PLUG ------> 0x800        *
+ * MOT_SMART_DOCK_SPDIF_PLUG ------> 0x400        *
  * EXTDISP_STATUS_DISPLAY (HDMI) --> 0x1000       *
+ *                                                *
+ * libaudio routing ---------------> Numeric code *
+ * HDMI or S/PDIF -----------------> 0x400        *
+ * EMU stereo (car dock) ----------> 0x800        *
+ *                                                *
  **************************************************/
 
 
@@ -35,11 +40,11 @@ public class DockAudio extends BroadcastReceiver {
             } else if(state == 1) {
                 Log.i(LOG_TAG, "Docked on desktop!");
                 am.setParameters("DockState=1");
-                AudioSystem.setDeviceConnectionState(0x800, 0x01, "");
+                AudioSystem.setDeviceConnectionState(0x400, 0x01, "");
             } else {
                 Log.i(LOG_TAG, "Docked on car!");
                 am.setParameters("DockState=2");
-                AudioSystem.setDeviceConnectionState(0x400, 0x01, "");
+                AudioSystem.setDeviceConnectionState(0x800, 0x01, "");
             }
 
         }
