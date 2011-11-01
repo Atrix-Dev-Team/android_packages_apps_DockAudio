@@ -8,6 +8,8 @@ import android.media.AudioManager;
 import android.media.AudioSystem;
 import android.util.Log;
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.lang.Thread;
 
 /**************************************************
@@ -40,11 +42,27 @@ public class DockAudio extends BroadcastReceiver {
                 AudioSystem.setDeviceConnectionState(0x800, 0x00, "");
                 am.setParameters("DockState=0;routing=2");
             } else if(state == 1) {
-                Log.i(LOG_TAG, "Docked on desktop!");
-                am.setParameters("DockState=1;routing=1024");
-                AudioSystem.setForceUse(0x3, 0x400);
-                try { Thread.sleep(3000); } catch (Exception e) {}
-                AudioSystem.setDeviceConnectionState(0x400, 0x01, "");
+                try { Thread.sleep(1000); } catch (Exception e) {}
+                int emuconn;
+                try {
+                    emuconn = (new FileInputStream(new File("/sys/class/switch/emuconn/state"))).read();
+                } catch (Exception e) {
+                    Log.e(LOG_TAG, "Problem detecting kind of dock. Defaulting to Standard Dock");
+                    emuconn = 1;
+                }
+                if(emuconn == 0){
+                    Log.i(LOG_TAG, "Docked on desktop HD Dock!");
+                    am.setParameters("DockState=1;routing=1024");
+                    AudioSystem.setForceUse(0x3, 0x400);
+                    try { Thread.sleep(3000); } catch (Exception e) {}
+                    AudioSystem.setDeviceConnectionState(0x400, 0x01, "");
+               } else {
+                    Log.i(LOG_TAG, "Docked on desktop Standard Dock!");
+                    am.setParameters("DockState=1;routing=2048");
+                    AudioSystem.setForceUse(0x3, 0x800);
+                    try { Thread.sleep(3000); } catch (Exception e) {}
+                    AudioSystem.setDeviceConnectionState(0x800, 0x01, "");
+               }
             } else {
                 Log.i(LOG_TAG, "Docked on car!");
                 am.setParameters("DockState=2;routing=2048");
