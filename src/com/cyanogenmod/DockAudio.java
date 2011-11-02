@@ -53,12 +53,21 @@ public class DockAudio extends BroadcastReceiver {
             editor.putInt("DockState", mDockState);
             editor.commit();
 
+            /* When we undock the phone, first the audio is disconnected from the switch
+               but DockState is non-zero. This is needed to actually disable the audio
+               routing completely */
+            if(mDockState == 0) {
+                Intent disable = new Intent();
+                disable.setAction("com.cyanogenmod.dockaudio.DISABLE_AUDIO");
+                context.sendBroadcast(disable);
+            }
+
         }else if(intent.getAction().equals("com.cyanogenmod.dockaudio.DISABLE_AUDIO")){
             Log.i(LOG_TAG, "Disabled audio on dock!");
-            AudioSystem.setForceUse(FOR_DOCK, 0);
             AudioSystem.setDeviceConnectionState(AUDIO_OUT_SPDIF, 0, "");
             AudioSystem.setDeviceConnectionState(AUDIO_OUT_ANALOG, 0, "");
             am.setParameters("routing=2;DockState=" + getDockState(context));
+            AudioSystem.setForceUse(FOR_DOCK, 0);
 
         }else if(intent.getAction().equals("com.cyanogenmod.dockaudio.ENABLE_ANALOG_AUDIO")){
             Log.i(LOG_TAG, "Enabled analog audio on dock!");

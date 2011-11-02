@@ -16,7 +16,7 @@ public class ListenSwitch extends Service {
 
     @Override
     public void onCreate() {
-        mUEventObserver.startObserving("DEVPATH=/class/switch/emuconn");
+        mUEventObserver.startObserving("DEVPATH=/devices/virtual/switch/emuconn");
         Log.i(LOG_TAG, "Dock Audio service started");
     }
 
@@ -42,19 +42,23 @@ public class ListenSwitch extends Service {
         public void onUEvent(UEventObserver.UEvent event) {
             Log.i(LOG_TAG, "DockAudio UEVENT: " + event.toString());
 
-            String name = event.get("SWITCH_NAME");
-            String state = event.get("SWITCH_STATE");
-
-            Intent intent;
-            if ("0".equals(state) || "No Device".equals(name)) {
-                intent = new Intent("com.cyanogenmod.dockaudio.DISABLE_AUDIO");
-            } if ("Mono out".equals(name) || "Stereo out".equals(name)) {
-                intent = new Intent("com.cyanogenmod.dockaudio.ENABLE_ANALOG_AUDIO");
-            } else { //if ("SPDIF audio out".equals(name)) {
-                intent = new Intent("com.cyanogenmod.dockaudio.DIGITAL_AUDIO");
+            int state = 0;
+            try {
+                state = Integer.parseInt(event.get("SWITCH_STATE"));
+            } catch (NumberFormatException e) {
+                Log.e(LOG_TAG, "Error parsing switch state!");
             }
 
-            startActivity(intent);
+            Intent intent = new Intent();
+            if (0 == state) { //No Device
+                intent.setAction("com.cyanogenmod.dockaudio.DISABLE_AUDIO");
+            } if (1 == state || 2 == state) { // Mono out or Stereo out
+                intent.setAction("com.cyanogenmod.dockaudio.ENABLE_ANALOG_AUDIO");
+            } else { //if ("SPDIF audio out".equals(name)) {
+                intent.setAction("com.cyanogenmod.dockaudio.ENABLE_DIGITAL_AUDIO");
+            }
+            sendBroadcast(intent);
+            Log.i(LOG_TAG, "Broadcasted intent for state " + state);
         }
     };
 }
