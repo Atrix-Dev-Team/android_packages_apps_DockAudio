@@ -52,9 +52,9 @@ public class ListenSwitch extends Service {
             Intent intent = new Intent();
             if (0 == state) { //No Device
                 intent.setAction("com.cyanogenmod.dockaudio.DISABLE_AUDIO");
-            } if (1 == state || 2 == state) { // Mono out or Stereo out
+            } else if (1 == state || 2 == state) { // Mono out or Stereo out
                 intent.setAction("com.cyanogenmod.dockaudio.ENABLE_ANALOG_AUDIO");
-            } else { //if ("SPDIF audio out".equals(name)) {
+            } else { //SPDIF audio out
                 intent.setAction("com.cyanogenmod.dockaudio.ENABLE_DIGITAL_AUDIO");
             }
             sendBroadcast(intent);

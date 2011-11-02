@@ -46,7 +46,7 @@ public class DockAudio extends BroadcastReceiver {
         Bundle extras = intent.getExtras();
 
         if(extras != null && extras.containsKey("android.intent.extra.DOCK_STATE")){
-            Log.i(LOG_TAG, "Device docked!");
+            Log.i(LOG_TAG, "Device (un)docked!");
             int mDockState = extras.getInt("android.intent.extra.DOCK_STATE",1);
             SharedPreferences prefs = context.getSharedPreferences("DockState",0);
             SharedPreferences.Editor editor = prefs.edit();
