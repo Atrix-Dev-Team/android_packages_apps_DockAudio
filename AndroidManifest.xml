@@ -4,7 +4,7 @@
       android:versionCode="1"
       android:versionName="1.0"
       android:sharedUserId="android.uid.system">
-    <application>
+    <application android:persistent="true">
         <receiver android:name=".DockAudio" android:enabled="true">
             <intent-filter>
                 <action android:name="android.intent.action.DOCK_EVENT" />
@@ -13,7 +13,14 @@
                 <action android:name="com.cyanogenmod.dockaudio.ENABLE_DIGITAL_AUDIO" />
             </intent-filter>
         </receiver>
+        <receiver android:name=".OnBoot" android:enabled="true" android:exported="false">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+            </intent-filter>
+        </receiver>
+        <service android:name=".ListenSwitch" android:enabled="true" />
     </application>
     <uses-sdk android:minSdkVersion="3" />
     <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
 </manifest>
