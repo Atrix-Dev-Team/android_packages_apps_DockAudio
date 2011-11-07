@@ -58,11 +58,15 @@ public class DockAudio extends BroadcastReceiver {
                routing completely */
             if(mDockState == 0) {
                 Intent disable = new Intent();
-                disable.setAction("com.cyanogenmod.dockaudio.DISABLE_AUDIO");
+                disable.setAction("com.cyanogenmod.dockaudio.UNDOCK");
                 context.sendBroadcast(disable);
             }
 
-        }else if(intent.getAction().equals("com.cyanogenmod.dockaudio.DISABLE_AUDIO")){
+        }else if(intent.getAction().equals("com.cyanogenmod.dockaudio.UNDOCK")){
+            Log.i(LOG_TAG, "Disabled audio on dock!");
+            am.setParameters("DockState=0");
+
+        }else if(intent.getAction().equals("com.cyanogenmod.dockaudio.ENABLE_SPEAKER_AUDIO")){
             Log.i(LOG_TAG, "Disabled audio on dock!");
             AudioSystem.setDeviceConnectionState(AUDIO_OUT_SPDIF, 0, "");
             AudioSystem.setDeviceConnectionState(AUDIO_OUT_ANALOG, 0, "");
