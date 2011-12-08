@@ -8,7 +8,8 @@
         <receiver android:name=".DockAudio" android:enabled="true">
             <intent-filter>
                 <action android:name="android.intent.action.DOCK_EVENT" />
-                <action android:name="com.cyanogenmod.dockaudio.DISABLE_AUDIO" />
+                <action android:name="com.cyanogenmod.dockaudio.UNDOCK" />
+                <action android:name="com.cyanogenmod.dockaudio.ENABLE_SPEAKER_AUDIO" />
                 <action android:name="com.cyanogenmod.dockaudio.ENABLE_ANALOG_AUDIO" />
                 <action android:name="com.cyanogenmod.dockaudio.ENABLE_DIGITAL_AUDIO" />
             </intent-filter>
