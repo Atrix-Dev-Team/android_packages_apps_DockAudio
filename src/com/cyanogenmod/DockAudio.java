@@ -46,8 +46,8 @@ public class DockAudio extends BroadcastReceiver {
         Bundle extras = intent.getExtras();
 
         if(extras != null && extras.containsKey("android.intent.extra.DOCK_STATE")){
-            Log.i(LOG_TAG, "Device (un)docked!");
             int mDockState = extras.getInt("android.intent.extra.DOCK_STATE",1);
+            Log.i(LOG_TAG, (mDockState != 0) ? "Device docked!" : "Device undocked!");
             SharedPreferences prefs = context.getSharedPreferences("DockState",0);
             SharedPreferences.Editor editor = prefs.edit();
             editor.putInt("DockState", mDockState);
@@ -67,7 +67,7 @@ public class DockAudio extends BroadcastReceiver {
             am.setParameters("DockState=0");
 
         }else if(intent.getAction().equals("com.cyanogenmod.dockaudio.ENABLE_SPEAKER_AUDIO")){
-            Log.i(LOG_TAG, "Disabled audio on dock!");
+            Log.i(LOG_TAG, "Enabled speaker audio!");
             AudioSystem.setDeviceConnectionState(AUDIO_OUT_SPDIF, 0, "");
             AudioSystem.setDeviceConnectionState(AUDIO_OUT_ANALOG, 0, "");
             am.setParameters("routing=2;DockState=" + getDockState(context));
