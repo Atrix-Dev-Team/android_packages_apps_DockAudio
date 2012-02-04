@@ -16,6 +16,7 @@ public class ListenSwitch extends Service {
 
     @Override
     public void onCreate() {
+        mUEventObserver.startObserving("DEVPATH=/devices/virtual/switch/smartdock");
         mUEventObserver.startObserving("DEVPATH=/devices/virtual/switch/emuconn");
         Log.i(LOG_TAG, "Dock Audio service started");
     }
@@ -42,8 +43,10 @@ public class ListenSwitch extends Service {
         public void onUEvent(UEventObserver.UEvent event) {
             Log.i(LOG_TAG, "DockAudio UEVENT: " + event.toString());
 
+            String name = "";
             int state = 0;
             try {
+                name = event.get("SWITCH_NAME");
                 state = Integer.parseInt(event.get("SWITCH_STATE"));
             } catch (NumberFormatException e) {
                 Log.e(LOG_TAG, "Error parsing switch state!");
@@ -53,10 +56,10 @@ public class ListenSwitch extends Service {
             if (0 == state) { //No Device
                 intent.setAction("com.cyanogenmod.dockaudio.ENABLE_SPEAKER_AUDIO");
                 Log.i(LOG_TAG, "ENABLE_SPEAKER_AUDIO");
-            } else if (1 == state || 2 == state) { // Mono out or Stereo out
+            } else if (!"smartdock".equals(name) && (1 == state || 2 == state)) { // Mono out or Stereo out
                 intent.setAction("com.cyanogenmod.dockaudio.ENABLE_ANALOG_AUDIO");
                 Log.i(LOG_TAG, "ENABLE_ANALOG_AUDIO");
-            } else { //SPDIF audio out
+            } else { //SPDIF audio out, smartdock ("lapdock")
                 intent.setAction("com.cyanogenmod.dockaudio.ENABLE_DIGITAL_AUDIO");
                 Log.i(LOG_TAG, "ENABLE_DIGITAL_AUDIO");
             }
